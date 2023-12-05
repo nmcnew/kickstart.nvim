@@ -94,7 +94,10 @@ require('lazy').setup({
       'folke/neodev.nvim',
     },
   },
-
+  {
+    'simrat39/rust-tools.nvim',
+    opts = {}
+  },
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -253,7 +256,16 @@ require('lazy').setup({
     },
     build = ':TSUpdate',
   },
-
+  {
+    'nvim-tree/nvim-tree.lua',
+    lazy = false,
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
+    config = function ()
+      require('nvim-tree').setup {}
+    end
+  }
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
@@ -486,6 +498,16 @@ vim.defer_fn(function()
   }
 end, 0)
 
+local rt = require("rust-tools")
+
+rt.setup({
+  server = {
+    on_attach = function(_, bufnr)
+      vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
+      vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
+    end,
+  },
+})
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
 local on_attach = function(_, bufnr)
